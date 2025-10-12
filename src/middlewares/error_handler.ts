@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { AppError } from "../errors/AppError";
+import { AppError } from "../errors/app_error";
 
 export function errorHandler(
   err: any,
@@ -11,13 +11,6 @@ export function errorHandler(
     return res.status(err.statusCode).json({
       error: err.message,
       type: err.type,
-    });
-  }
-
-  if (err.name === "JsonWebTokenError" || err.name === "TokenExpiredError") {
-    return res.status(401).json({
-      error: "Invalid or expired token",
-      type: "auth",
     });
   }
 

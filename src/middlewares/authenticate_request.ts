@@ -1,25 +1,18 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../utils/jwt";
+import { AppError } from "../errors/app_error";
 
 const PUBLIC_PATHS = ["/auth/login", "/auth/refresh"];
 
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    id?: string;
-    sid: string;
-    isAnon: boolean;
-  };
-}
+export function authenticateRequest(req: Request, res: Response, next: NextFunction) {
 
-export function authenticateRequest(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-
-  if (PUBLIC_PATHS.some(path => req.path.startsWith(path))) {
+  if (PUBLIC_PATHS.some(path => req.originalUrl.startsWith(path))) {
     return next();
   }
 
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Authorization token required" });
+    throw new AppError("Authorization header missing or malformed", 401, "auth");
   }
 
   const token = authHeader.split(" ")[1];
@@ -35,6 +28,9 @@ export function authenticateRequest(req: AuthenticatedRequest, res: Response, ne
 
     next();
   } catch (err) {
-    res.status(401).json({ error: "Invalid or expired token", message: err});
+    if (err instanceof AppError) {
+      throw err;
+    }
+    throw new AppError("Invalid or expired token", 401, "auth");
   }
 }

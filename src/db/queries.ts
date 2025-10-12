@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 export async function createScrapingSession(
   type: ScrapingSessionType,
   encryptedData: string,
-  studentCode?: string
+  studentCode: string | null | undefined
 ) {
   const id = uuidv4();
   await query(
@@ -15,6 +15,24 @@ export async function createScrapingSession(
     [id, type, studentCode || null, encryptedData]
   );
   return id;
+}
+
+export async function updateScrapingSessionEncryptedData(id: string, encryptedData: string) {
+  await query(
+    `UPDATE scraping_sessions SET encrypted_data = $1 WHERE id = $2`,
+    [encryptedData, id]
+  );
+  await query(
+    `UPDATE scraping_sessions SET expires_at = NOW() + interval '1 hour' WHERE id = $1`,
+    [id]
+  );
+}
+
+export async function deleteScrapingSession(id  : string, userId: string | null | undefined) {
+  await query(`DELETE FROM scraping_sessions WHERE id = $1`, [id]);
+  if (userId){
+    await query(`DELETE FROM refresh_tokens WHERE user_id = $1`, [userId]);
+  }
 }
 
 export async function getScrapingSession(id: string): Promise<ScrapingSession | null> {

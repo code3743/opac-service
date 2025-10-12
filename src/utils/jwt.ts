@@ -18,8 +18,8 @@ export function verifyAccessToken(token: string): AccessTokenPayload {
   return jwt.verify(token, env.jwt.secret) as AccessTokenPayload;
 }
 
-export function signRefreshToken(userId: string): string {
-  return jwt.sign({ sub: userId, type: "refresh" }, env.jwt.secret, { expiresIn: REFRESH_EXP });
+export function signRefreshToken(id: string): string {
+  return jwt.sign({ sub: id, type: "refresh" }, env.jwt.secret, { expiresIn: REFRESH_EXP });
 }
 
 export function verifyRefreshToken(token: string): JwtPayload {
