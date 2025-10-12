@@ -1,0 +1,44 @@
+{
+  "name": "opac-service",
+  "version": "0.0.1",
+  "description": "Backend service that exposes an API for searching, consulting, and renewing books in the Universidad del Valle catalog.",
+  "keywords": [
+    "library",
+    "books",
+    "catalog",
+    "opac",
+    "api",
+    "backend",
+    "university",
+    "univalle",
+    "library-system",
+    "services",
+    "web-scraping"
+  ],
+  "license": "MIT",
+  "author": "code3743",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only --env-file=.env src/index.ts",
+    "build": "tsc",
+    "start": "node --env-file=.env dist/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.12.2",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.7.2",
+    "@types/pg": "^8.15.5",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22.14.0"
+  }
+}

@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:16
+    container_name: opac_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: opac_service
+    ports:
+      - "5432:5432"
+    volumes:
+      - opac_data:/var/lib/postgresql/data
+      - ./src/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d opac_service"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  opac_data:
