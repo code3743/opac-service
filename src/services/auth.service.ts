@@ -1,5 +1,5 @@
 import { authUser, getSessionId } from "../core";
-import { createScrapingSession, deleteScrapingSession, getScrapingSession, updateScrapingSessionEncryptedData} from "../db/queries";
+import { createScrapingSession, deleteScrapingSession, getScrapingSession, updateSession} from "../db/queries";
 import { AppError } from "../errors/app_error";
 import { CryptoService } from "../utils/crypto";
 import { signAccessToken, signRefreshToken, verifyRefreshToken} from "../utils/jwt";
@@ -45,8 +45,12 @@ export async function refresh(refreshToken: string) {
   if (!session) {
     throw new AppError("Invalid session", 401, "auth");
   }
+  if (session.studentCode) {
+    const auth = await authUser(session.studentCode, sessionId);
+    if (!auth) throw new AppError("Invalid student code", 401, "auth");
+  }
 
-  await updateScrapingSessionEncryptedData(session.id, CryptoService.encrypt(sessionId));
+  await updateSession(session.id, CryptoService.encrypt(sessionId));
 
   const accessToken = signAccessToken({
     sid: session.id,
