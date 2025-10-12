@@ -9,5 +9,8 @@ export const env = {
   jwt: {
     secret: process.env.JWT_SECRET || "supersecret",
     expiresIn: "15m"
+  },
+  crypto: {
+    encryptionKey: process.env.ENCRYPTION_KEY || "default_encryption_key"
   }
 };
