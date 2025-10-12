@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../utils/jwt";
 import { AppError } from "../errors/app_error";
 
-const PUBLIC_PATHS = ["/auth/login", "/auth/refresh"];
+const PUBLIC_PATHS = ["/api/auth/login", "/api/auth/refresh"];
+const PROTECTED_PATHS = ["/api/student"];
 
 export function authenticateRequest(req: Request, res: Response, next: NextFunction) {
 
@@ -25,6 +26,10 @@ export function authenticateRequest(req: Request, res: Response, next: NextFunct
       sid: payload.sid,
       isAnon: payload.anon ?? false
     };
+
+    if (req.user.isAnon && PROTECTED_PATHS.some(path => req.originalUrl.startsWith(path))) {
+      throw new AppError("Anonymous users cannot access this resource", 403, "auth");
+    }
 
     next();
   } catch (err) {
