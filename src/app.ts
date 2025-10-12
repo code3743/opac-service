@@ -5,13 +5,18 @@ import { errorHandler } from './middlewares/error_handler';
 import authRoutes from './routes/auth.routes';
 import studentRoutes from './routes/student.routes';
 
+
+// TODO: Temporary implementation to bypass SSL certificate verification for the OPAC server
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 const app = express();
+
 app.use(express.json());
+
 app.use(authenticateRequest);
 
-app.use("/auth", authRoutes);
-app.use("/student", studentRoutes);
-
+app.use("/api/auth", authRoutes);
+app.use("/api/student", studentRoutes);
 
 app.use(errorHandler);
 
