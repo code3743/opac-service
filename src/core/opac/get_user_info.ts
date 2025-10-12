@@ -17,36 +17,58 @@ export default async function getUserInfo(sessionId: string): Promise<StudentPro
             }
         );
         const $ = cheerio.load(response.data);
-        const firstName = $("#user_fname_text").text().trim() || '';
-        const lastName = $("#user_sname_text").text().trim() || '';
+        const firstName = $('#user_fname_text').text().trim() || '';
+        const lastName = $('#user_sname_text').text().trim() || '';
         const fullName = `${firstName} ${lastName}`.trim();
-        const programs = $("#user_depts_text > span")?.map((_, el) => {
-            const code = $(el).attr("code")?.trim() || "";
-            const name = $(el).text().trim().replace(' - ' + code, ' ');
+        const programs = $('#user_depts_text > span')?.map((_, el) => {
+            const code = $(el).attr('code')?.trim() || '';
+            const name = $(el).text().trim();
             return { code, name };
         }).get() || [];
 
-        const location = $("user_LOC_text").text().trim() || '';
-        const fine = parseFloat($("#user_fine_text").text().trim().replaceAll(",", "")) || 0.0;
+        const location = $('#user_LOC_text').text().trim() || '';
+        const fine = parseFloat($('#user_CURBAL_text').text().trim().replaceAll(',', '')) || 0.0;
+        const history = $('#user_tab_hist  table > tbody > tr')?.map((_, el) => {
+            if (_ === 0) return null; 
+            const cells = $(el).find('td');
+            return {
+                identifier: $(cells[0]).text().trim(),
+                title: $(cells[1]).text().trim(),
+                location: $(cells[2]).text().trim(),
+                transactionType: $(cells[3]).text().trim(),
+                date: $(cells[4]).text().trim(),
+            };
+        }).get() || [];
+
+        const borrowedBooks = $('#user_tab_loan table > tbody > tr')?.map((_, el) => {
+            if (_ === 0) return null;
+            const cells = $(el).find('td');
+            return {
+                identifier: $(cells[0]).text().trim(),
+                title: $(cells[1]).text().trim(),
+                location: $(cells[2]).text().trim(),
+                date: $(cells[3]).text().trim(),
+                fine: parseFloat($(cells[4]).text().trim().replaceAll(',', '')) || 0.0,
+            };
+        }).get() || [];
 
 
         return {
-            code: $("#user_code_text").text().trim(),
+            code: $('#user_barcode_text').text().trim(),
             firstName,
             fullName,
             programs: programs,
             fine,
-            history: [],
-            borrowedBooks: [],
+            history: history,
+            borrowedBooks: borrowedBooks,
             location: location
         }
     } catch (error) {
-
         if (axios.isAxiosError(error)) {
-            throw new AppError("Service unavailable", 503, "network");
+            throw new AppError('Service unavailable', 503, 'network');
         }
         
-        throw new AppError("Internal server error", 500, "server");
+        throw new AppError('Internal server error', 500, 'server');
     }
 
 }
