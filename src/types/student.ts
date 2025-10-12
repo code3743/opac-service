@@ -2,8 +2,9 @@ export interface BorrowHistory {
   identifier: string;
   title: string;
   location: string;
-  transactionType: string;
+  transactionType?: string;
   date: string;
+  fine?: number;
 }
 
 export interface Program {
@@ -12,12 +13,6 @@ export interface Program {
 }
 
 
-export interface BorrowedBook {
-  title: string;
-  author: string;
-  dueDate: string;
-}
-
 export interface StudentProfile {
   code: string;
   firstName: string;
@@ -25,6 +20,6 @@ export interface StudentProfile {
   programs: Program[] | null;
   fine: number;
   history: BorrowHistory[];
-  borrowedBooks: BorrowedBook[];
+  borrowedBooks: BorrowHistory[];
   location: string;
 }

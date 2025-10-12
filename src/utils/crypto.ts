@@ -7,7 +7,7 @@ export class CryptoService {
   private static readonly KEY = Buffer.from(env.crypto.encryptionKey, "hex");
 
  
-  static encrypt<T>(data: T): string {
+  static encrypt(data: string): string {
     const iv = crypto.randomBytes(this.IV_LENGTH);
     const cipher = crypto.createCipheriv(this.ALGORITHM, this.KEY, iv);
 
@@ -18,8 +18,10 @@ export class CryptoService {
   }
 
   
-  static decrypt<T = any>(encrypted: string): T {
+  static decrypt(encrypted: string): string{
+   
     const [ivHex, contentHex] = encrypted.split(":");
+   
     const iv = Buffer.from(ivHex, "hex");
     const encryptedText = Buffer.from(contentHex, "hex");
 
@@ -28,11 +30,6 @@ export class CryptoService {
 
     const output = decrypted.toString("utf8");
 
-
-    try {
-      return JSON.parse(output) as T;
-    } catch {
-      return output as unknown as T;
-    }
+    return output;
   }
 }
