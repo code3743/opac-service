@@ -28,5 +28,5 @@ export async function logout(req: Request, res: Response) {
   if (!req.user) throw new AppError("Not authenticated", 401, "auth");
 
   await AuthService.logout(req.user.sid);
-  res.status(200).json({ message: "Session closed" });
+  res.status(204).send();
 }
