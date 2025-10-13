@@ -1,4 +1,4 @@
-export interface BorrowHistory {
+export interface StudentBookTransaction {
   identifier: string;
   title: string;
   location: string;
@@ -17,9 +17,7 @@ export interface StudentProfile {
   code: string;
   firstName: string;
   fullName: string;
-  programs: Program[] | null;
+  programs: Program[];
   fine: number;
-  history: BorrowHistory[];
-  borrowedBooks: BorrowHistory[];
   location: string;
 }
